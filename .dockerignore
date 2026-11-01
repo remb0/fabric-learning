@@ -1,0 +1,9 @@
+.git
+pb_data
+README.md
+vragenbank.json
+*.zip
+.DS_Store
+**/.DS_Store
+._*
+**/._*

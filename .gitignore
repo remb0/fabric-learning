@@ -1,0 +1,19 @@
+# macOS metadata
+.DS_Store
+._*
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# PocketBase runtime data and binaries
+pb_data/
+pocketbase
+*.db
+*.db-shm
+*.db-wal
+
+# Generated archives and logs
+*.zip
+*.log

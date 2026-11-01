@@ -1,0 +1,22 @@
+services:
+  fabric-dp700:
+    build:
+      context: .
+      args:
+        POCKETBASE_VERSION: 0.40.6
+    container_name: fabric-dp700
+    restart: unless-stopped
+    ports:
+      # Reach this port from Nginx Proxy Manager on the LAN; do not forward it from the internet.
+      - "8091:8090"
+    volumes:
+      - fabric-dp700-data:/app/pb_data
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+volumes:
+  fabric-dp700-data:
+    name: fabric-dp700-data
