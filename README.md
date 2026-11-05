@@ -1,61 +1,92 @@
-# Microsoft DP Exam Trainer
+# Microsoft Data Certification Exam Trainer
 
-Een uitbreidbaar examentrainingsplatform voor Microsoft DP-certificeringen. De huidige routes zijn DP-600, DP-700, DP-800 en DP-900; nieuwe examens kunnen als zelfstandige routes worden toegevoegd. De app gebruikt PocketBase voor accounts, voortgang per examen en beheerdersfuncties. Dit is een onafhankelijke leerapp met originele oefenvragen, niet een officiële Microsoft-app. Zie [EXAM_PLATFORM_PLAN.md](EXAM_PLATFORM_PLAN.md) voor de productopzet en implementatiestatus.
+An independent, extensible practice platform for Microsoft DP certification exams. The current exam tracks are DP-600, DP-700, DP-800, and DP-900. Learners choose an exam first, then practice with exam-specific question banks, domains, study links, and progress tracking.
 
-## Installatie
+The platform uses PocketBase for accounts, progress sync, and administrator features. It is not an official Microsoft product, and its practice questions are original learning material rather than official or leaked exam questions.
 
-1. Plaats de projectbestanden op de Docker-host.
-2. Maak vóór de eerste upgrade een herstelbare back-up van de PocketBase-volume.
-3. Bouw de container en start de Compose-service met `docker compose up -d --build`.
-4. Configureer je bestaande reverse proxy voor de app. Beperk de PocketBase-beheerinterface tot vertrouwde beheerverbindingen; publiceer de beheerinterface niet rechtstreeks op internet.
-5. Controleer de containerlogs en meld aan met een testaccount.
+## Exam coverage
 
-PocketBase voert de versiebeheerste collectiemigraties bij het starten uit. De persistent volume bewaart accounts en voortgang. Maak periodiek back-ups en controleer dat je een back-up kunt herstellen.
+| Exam | Focus | Question bank status |
+|---|---|---|
+| DP-600 | Analytics engineering and Microsoft Fabric | Starter set; still needs full exam coverage |
+| DP-700 | Data engineering in Microsoft Fabric | Existing extended question bank |
+| DP-800 | Database development with AI | Starter set; still needs full exam coverage |
+| DP-900 | Data fundamentals | Starter set; still needs full exam coverage |
 
-## Deploy op de Docker-host
+Exam objectives and Microsoft study guides can change. Use the linked Microsoft Learn material in each exam track to check current objectives. Practice results are not official Microsoft exam scores.
 
-Haal de eerste keer de nieuwste projectbestanden op en start de deploy:
+## Features
+
+- Exam selection tiles explain the intended audience and focus of each certification.
+- Study mode gives immediate feedback; exam simulation is timed and uses the selected exam's configuration.
+- Profiles keep progress separate for each exam and sync it across devices after sign-in.
+- Administrators can review accounts, sign-in attempts, and recent high-level learning activity.
+- Administrators can import supported VCE files; parsing takes place in the browser.
+- Dutch and English interface text is available.
+
+The activity view records the selected exam, a broad activity label, and the latest heartbeat. It does not record answer choices or question content. Tell learners about this monitoring and apply an appropriate retention policy.
+
+## Docker deployment
+
+The Compose deployment stores PocketBase data in a persistent named volume. Rebuilding or recreating the container keeps that volume and its account and progress data.
+
+### First-time setup
+
+For a private repository, configure a read-only GitHub deploy key on the Docker host. Clone the repository into your chosen deployment directory, then run:
 
 ```sh
-git pull --ff-only origin main
-chmod +x deploy.sh
+git clone <repository-ssh-url> <deployment-directory>
+cd <deployment-directory>
 ./deploy.sh
 ```
 
-Daarna is `./deploy.sh` voldoende voor volgende updates. Het script haalt `main` op, controleert dat de werkmap schoon is, bouwt de Compose-service opnieuw, start de container opnieuw en controleert de appbestanden in de container. Het behoudt de bestaande PocketBase-datavolume. Als er lokale wijzigingen of een Git-conflict zijn, stopt het script en toont het de reden.
+If an older Compose deployment is running from another directory, stop that service before starting the new checkout. Do not add `-v` to `docker compose down`; that would remove the persistent data volume.
 
-## Accounts en beheer
+### Updating
 
-Gebruikers kunnen zelf een account aanmaken. Zonder account kun je de oefenfuncties gebruiken, maar wordt voortgang niet tussen apparaten gesynchroniseerd. Aangemelde gebruikers zien hun eigen voortgang per examen in hun profiel.
-
-Maak een beheeraccount aan via de gewone registratie en stel daarna in de afgeschermde PocketBase-beheerinterface het veld `role` op `admin` in. Gewone gebruikers kunnen hun eigen rol niet wijzigen. De beheerpagina is server-side alleen toegankelijk voor accounts met de adminrol. Zij toont accounts, aanmeldpogingen en globale activiteit: examen, grove schermactiviteit en laatste heartbeat. Antwoordkeuzes en vraaginhoud worden niet als activiteit geregistreerd.
-
-De app meldt gebruikers dat de beheerder hun globale activiteit kan zien. Pas bewaartermijnen en accountverwijdering toe volgens het privacybeleid van de organisatie.
-
-## VCE-import
-
-Beheerders kunnen een VCE-bestand van maximaal 20 MB importeren. Het bestand wordt in de browser verwerkt; alleen genormaliseerde vragen worden opgeslagen. Single-choice, multiple-choice en hotspotvragen worden ondersteund. Sommige VCE-bestanden vereisen een externe Avanset-ontgrendelsleutel en kunnen niet rechtstreeks worden verwerkt.
-
-## Inhoud en examendekking
-
-DP-700 heeft de bestaande uitgebreide vragenbank. DP-600, DP-800 en DP-900 hebben startersets om de leerroute en afzonderlijke voortgang te demonstreren; deze sets zijn nog geen volledige examendekking. Elke route gebruikt zijn eigen examendoelen en Microsoft-studiegids. Die doelen kunnen wijzigen. Oefenscores zijn geen officiële Microsoft-examenscores. Nieuwe routes worden aan de examencatalogus en hun eigen vragenbank toegevoegd; de voortgang, keuze-interface en quizmotor zijn al examen-onafhankelijk.
-
-## Een examenroute uitbreiden
-
-De examencatalogus staat in `certifications.js`; de extra vragenbanken staan in `questions-extra.js`. Voeg daar de examencode, titel, omschrijving, doelgroep, domeinen, Microsoft-studiegids, simulatieduur en vragenbank toe. De interface, domeinkeuze, profielvoortgang en administratie bouwen hun weergave uit deze configuratie op. Werk daarna de smoke-tests bij en controleer de officiële examendoelen en bronlinks.
-
-## Ontwikkelchecks
-
-Voer lokaal uit:
+From the repository checkout, run:
 
 ```sh
-node --test tests/*.test.cjs
+./deploy.sh
+```
+
+The script checks that the checkout is on `main` and has no local changes, fetches and fast-forwards from GitHub, builds the image, recreates the service, verifies the app files inside the container, and prints the service status and recent logs. It stops with an explanation if the checkout is dirty or has diverged from `origin/main`.
+
+Configure the existing reverse proxy to reach the app using the port defined in the Compose file. Keep the PocketBase superuser interface restricted to trusted administrative access; do not expose it directly to the public internet.
+
+### PocketBase data and backups
+
+PocketBase runs versioned collection migrations when the container starts. The named volume persists users and learning progress. Back up this volume before upgrades and test that a backup can be restored.
+
+## Accounts and administration
+
+Learners can practice without an account, but their progress will not sync between devices. Signed-in users can see their own progress by exam in the profile.
+
+To grant administrator access, create the account through the app and set its `role` field to `admin` through the restricted PocketBase superuser interface. Regular users cannot change their own role. The app's administrator page is restricted to accounts with the admin role.
+
+## VCE import
+
+Administrators can import VCE files up to 20 MB. The browser parses the file and only the normalized questions are stored in PocketBase. Single-choice, multiple-choice, and hotspot questions are supported. Some encrypted VCE files require an Avanset unlock key and cannot be parsed directly.
+
+## Adding an exam track
+
+The exam catalogue and per-exam settings are in `certifications.js`. The additional question banks are in `questions-extra.js`; the existing DP-700 bank is embedded in `index.html`. To add a track, define its code, title, audience, description, domains, Microsoft Learn study guide, and simulation duration, then add questions with explanations and source links. Extend the smoke tests to check the new bank and its domain coverage.
+
+The chooser, quiz flow, profile progress, and administrator activity view read the exam configuration dynamically. New tracks can therefore use the shared platform without adding exam-specific branding to the general pages.
+
+## Local checks
+
+Run these from the repository root:
+
+```sh
+sh -n deploy.sh
 node --check certifications.js
 node --check questions-extra.js
 node --check pb_hooks/auth_audit.pb.js
 node --check pb_migrations/1793568000_admin_and_imported_exams.js
 node --check pb_migrations/1793570000_learning_activity.js
+node --test tests/*.test.cjs
 docker compose build
 ```
 
-GitHub Actions voert deze syntaxchecks, smoke-tests en een containerbuild uit bij pushes naar `main` en pull requests.
+GitHub Actions runs the syntax checks, smoke tests, and a Docker image build on pushes to `main` and pull requests.
