@@ -11,7 +11,7 @@ De app is een uitbreidbaar platform voor Microsoft DP-examens, waarin DP-700 é�
 | DP-700 | Data engineers | Inname, transformatie, orchestration, monitoring en optimalisatie in Fabric |
 | DP-800 | SQL/databaseontwikkelaars met AI-focus | T-SQL, databasebeveiliging, CI/CD, vector search en RAG |
 
-De vier tracks sluiten aan op de Microsoft-studiegidsen. De examendoelen en wegingen kunnen wijzigen; de beheer- en contentworkflow moet daarom datum en bronversie per vragenbank bijhouden. De vragen zijn originele leerinhoud, geen officiële of gelekte examenvragen.
+De vier tracks sluiten aan op de actuele Microsoft-studiegidsen. De examendoelen en wegingen kunnen wijzigen; de beheer- en contentworkflow moet daarom datum en bronversie per vragenbank bijhouden. De vragen zijn originele leerinhoud, geen officiële of gelekte examenvragen. Naast de examendoelen worden technische documentatie, vakpublicaties en voorbeeldrepositories gebruikt, waaronder SQLBI, Apache Spark/Kafka/Parquet, PostgreSQL, Microsoft Fabric Community en GitHub-samples.
 
 ## Gebruikerservaring
 
@@ -35,13 +35,14 @@ De bestaande `progress`-record blijft de eigendomsenvelop per gebruiker. Het pay
 
 ## Inhoud en kwaliteit
 
-Elke vragenbank krijgt eigen metadata: certificaatcode, Microsoft-studiegids-URL, datum van inhoudscontrole, domeinen en wegingen. Vragen moeten per doel worden gemarkeerd, uitleggen waarom het antwoord klopt, foutieve afleiders motiveren waar dat leerwaarde toevoegt en verwijzen naar Microsoft Learn. Importvragen blijven gescheiden van originele content en mogen een examencode dragen.
+Elke vragenbank krijgt eigen metadata: certificaatcode, officiële studiegids-URL, datum van inhoudscontrole, domeinen en wegingen. Vragen moeten per doel worden gemarkeerd, uitleggen waarom het antwoord klopt, foutieve afleiders motiveren waar dat leerwaarde toevoegt en verwijzen naar de examendoelen plus relevante aanvullende technische bronnen. Importvragen blijven gescheiden van originele content en mogen een examencode dragen.
 
 ### Huidige inhoudsstatus
 
 - DP-700: bestaande uitgebreide vragenbank en Engelse vertaling blijven behouden.
-- DP-600, DP-800 en DP-900: eerste originele voorbeeldset is toegevoegd om de volledige route technisch te demonstreren. Dit is nadrukkelijk nog geen volledige of evenwichtige examenvragenbank.
-- Voor productie moeten de drie nieuwe banken worden uitgebreid naar alle examendoelen, gewogen naar de officiële domeinpercentages en onafhankelijk inhoudelijk worden nagekeken.
+- DP-600, DP-800 en DP-900: elk heeft nu 18 originele vragen verdeeld over de geconfigureerde examendomeinen, met officiële examendoelen en aanvullende technische bronnen.
+- DP-700: de bestaande uitgebreide bank is behouden en aangevuld met nieuwe scenario's en bredere technische bronnen.
+- Deze aantallen vormen een eerste brede oefenbank, geen volledige reproductie of vervanging van het officiële examen. Vóór verdere uitbreiding moet elke bank periodiek worden vergeleken met de actuele domeinwegingen en inhoudelijk worden nagekeken.
 - De keuze van het examen en de domeinlabels zijn per track ingericht. De bestaande quizmotor wordt nog hergebruikt; gespecialiseerde vraagtypen en per-examen volledig gelokaliseerde uitleg zijn uitbreidingswerk.
 
 ## Uitbreiden met nieuwe examens
