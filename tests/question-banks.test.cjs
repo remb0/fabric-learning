@@ -62,7 +62,7 @@ test('activity schema limits reads to administrators and writes to the owning us
 
 test('Docker image includes the extra bank, hooks and PocketBase migrations', () => {
   const dockerfile = fs.readFileSync(path.join(root, 'Dockerfile'), 'utf8');
-  assert.match(dockerfile, /certifications\\.js/);
+  assert.match(dockerfile, /certifications\.js/);
   assert.match(dockerfile, /questions-extra\.js/);
   assert.match(dockerfile, /COPY --chown=pocketbase:pocketbase pb_migrations/);
   assert.match(dockerfile, /COPY --chown=pocketbase:pocketbase pb_hooks/);
