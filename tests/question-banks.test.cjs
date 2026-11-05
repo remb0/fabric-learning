@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const extraSource = fs.readFileSync(path.join(root, 'questions-extra.js'), 'utf8');
 const expandedSource = fs.readFileSync(path.join(root, 'questions-expanded.js'), 'utf8');
+const referenceSource = fs.readFileSync(path.join(root, 'question-references.js'), 'utf8');
 const certificationSource = fs.readFileSync(path.join(root, 'certifications.js'), 'utf8');
 const dp700Match = html.match(/const DP700_QUESTIONS = (\[.*?\]);\n    for\(const \[exam,additions\]/s);
 assert.ok(dp700Match, 'DP-700 question bank should be embedded in the app');
@@ -16,9 +17,14 @@ const sandbox = { window: {} };
 vm.runInNewContext(extraSource, sandbox, { timeout: 1000 });
 vm.runInNewContext(certificationSource, sandbox, { timeout: 1000 });
 vm.runInNewContext(expandedSource, sandbox, { timeout: 1000 });
+vm.runInNewContext(referenceSource, sandbox, { timeout: 1000 });
 for (const [exam, additions] of Object.entries(sandbox.window.QUESTION_ENRICHMENT)) {
   if (exam === 'dp700') dp700.push(...additions);
   else sandbox.window.EXTRA_QUESTION_BANKS[exam].push(...additions);
+}
+for (const [exam, references] of Object.entries(sandbox.window.QUESTION_REFERENCE_OVERRIDES)) {
+  const questions = exam === 'dp700' ? dp700 : sandbox.window.EXTRA_QUESTION_BANKS[exam];
+  for (const q of questions) if (references[q.id]) q.sources = [...(q.sources || []), references[q.id]];
 }
 const banks = { dp600: sandbox.window.EXTRA_QUESTION_BANKS.dp600, dp700, dp800: sandbox.window.EXTRA_QUESTION_BANKS.dp800, dp900: sandbox.window.EXTRA_QUESTION_BANKS.dp900 };
 const expectedDomains = {
@@ -41,6 +47,7 @@ test('all four exam tracks have a question bank and distinct domain coverage', (
       assert.ok(q.correct.every(i => Number.isInteger(i) && i >= 0 && i < q.options.length), `${exam}/${q.id} answer indices must point to options`);
       const links = [...(q.source ? [{ title: q.sourceTitle || 'Exam objectives', url: q.source }] : []), ...(q.sources || [])];
       assert.ok(links.length >= 1, `${exam}/${q.id} should include at least one source link`);
+      assert.ok(q.sources?.length || !q.source?.includes('/study-guides/'), `${exam}/${q.id} needs a topic-specific further-reading source in addition to the exam guide`);
       for (const link of links) {
         assert.ok(link.title && /^https:\/\//.test(link.url), `${exam}/${q.id} has an invalid source link`);
       }
@@ -77,6 +84,7 @@ test('Docker image includes the question banks, hooks and PocketBase migrations'
   assert.match(dockerfile, /certifications\.js/);
   assert.match(dockerfile, /questions-extra\.js/);
   assert.match(dockerfile, /questions-expanded\.js/);
+  assert.match(dockerfile, /question-references\.js/);
   assert.match(dockerfile, /COPY --chown=pocketbase:pocketbase pb_migrations/);
   assert.match(dockerfile, /COPY --chown=pocketbase:pocketbase pb_hooks/);
 });
