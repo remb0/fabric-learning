@@ -12,6 +12,18 @@ Een uitbreidbaar examentrainingsplatform voor Microsoft DP-certificeringen. De h
 
 PocketBase voert de versiebeheerste collectiemigraties bij het starten uit. De persistent volume bewaart accounts en voortgang. Maak periodiek back-ups en controleer dat je een back-up kunt herstellen.
 
+## Deploy op de Docker-host
+
+Haal de eerste keer de nieuwste projectbestanden op en start de deploy:
+
+```sh
+git pull --ff-only origin main
+chmod +x deploy.sh
+./deploy.sh
+```
+
+Daarna is `./deploy.sh` voldoende voor volgende updates. Het script haalt `main` op, controleert dat de werkmap schoon is, bouwt de Compose-service opnieuw, start de container opnieuw en controleert de appbestanden in de container. Het behoudt de bestaande PocketBase-datavolume. Als er lokale wijzigingen of een Git-conflict zijn, stopt het script en toont het de reden.
+
 ## Accounts en beheer
 
 Gebruikers kunnen zelf een account aanmaken. Zonder account kun je de oefenfuncties gebruiken, maar wordt voortgang niet tussen apparaten gesynchroniseerd. Aangemelde gebruikers zien hun eigen voortgang per examen in hun profiel.

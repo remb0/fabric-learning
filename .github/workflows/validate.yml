@@ -21,7 +21,7 @@ jobs:
           node-version: 22
       - name: Validate JavaScript syntax
         run: |
-          node --check certifications.js
+          sh -n deploy.sh
           node --check questions-extra.js
           node --check pb_hooks/auth_audit.pb.js
           node --check pb_migrations/1793568000_admin_and_imported_exams.js
