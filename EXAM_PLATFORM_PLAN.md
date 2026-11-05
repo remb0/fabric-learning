@@ -1,8 +1,8 @@
-# Microsoft Data Exam Trainer — uitbreidingsplan en gerealiseerde basis
+# Microsoft DP Exam Trainer — uitbreidingsplan en gerealiseerde basis
 
 ## Doel en productkeuze
 
-De app groeit van een DP-700-oefensite naar één examentrainingsplatform. Gebruikers beginnen met een keuze uit vier certificeringen. Een tegel beschrijft het niveau, de doelgroep en het onderwerp, zodat iemand eerst de juiste route kiest en daarna pas de oefenmodus ziet.
+De app is een uitbreidbaar platform voor Microsoft DP-examens, waarin DP-700 één van de leerpaden is. Gebruikers beginnen met een keuze uit vier certificeringen. Een tegel beschrijft het niveau, de doelgroep en het onderwerp, zodat iemand eerst de juiste route kiest en daarna pas de oefenmodus ziet.
 
 | Examen | Voor wie | Focus |
 |---|---|---|
@@ -44,6 +44,10 @@ Elke vragenbank krijgt eigen metadata: certificaatcode, Microsoft-studiegids-URL
 - Voor productie moeten de drie nieuwe banken worden uitgebreid naar alle examendoelen, gewogen naar de officiële domeinpercentages en onafhankelijk inhoudelijk worden nagekeken.
 - De keuze van het examen en de domeinlabels zijn per track ingericht. De bestaande quizmotor wordt nog hergebruikt; gespecialiseerde vraagtypen en per-examen volledig gelokaliseerde uitleg zijn uitbreidingswerk.
 
+## Uitbreiden met nieuwe examens
+
+De merkuitstraling en algemene pagina’s zijn examen-onafhankelijk. De certificaatcatalogus staat in `certifications.js` en bevat per route de titel, doelgroep, omschrijving, domeinen, studiegids en simulatieduur. Vragen staan apart in `questions-extra.js` of in de bestaande DP-700-vragenbank. Een nieuw examen wordt toegevoegd door catalogusmetadata, een afzonderlijke vragenbank, Microsoft Learn-bronnen en tests voor de domeindekking aan te leveren. De keuze-interface, voortgang, adminweergave en toetsmotor lezen de actieve examenconfiguratie dynamisch. Dit maakt toevoegen van routes mogelijk zonder de productbranding of quizstroom om te bouwen.
+
 ## Architectuur en gegevensstromen
 
 - **Frontend:** statische single-page app met certificaatconfiguratie en per-certificaat vragenbank.
@@ -64,7 +68,8 @@ Elke vragenbank krijgt eigen metadata: certificaatcode, Microsoft-studiegids-URL
 
 ## Huidige implementatie in deze wijziging
 
-- Startscherm met vier uitlegtegels en een eerste routekeuze.
+- Generieke productbranding voor Microsoft DP-certificeringen en startscherm met uitlegtegels voor vier routes.
+- Certificaatmetadata en simulatieduur losgekoppeld van de applicatieschil, zodat toekomstige routes eenvoudig configureerbaar zijn.
 - Certificaatconfiguratie, per-examen domeinnamen en afzonderlijke voortgangsvelden.
 - Startervragen voor DP-600, DP-800 en DP-900; bestaande DP-700-vragenbank blijft beschikbaar.
 - Profieloverzicht met aantallen per examen en voortgang blijft lokaal en in PocketBase opgeslagen.
