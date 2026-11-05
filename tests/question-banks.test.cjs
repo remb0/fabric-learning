@@ -41,6 +41,8 @@ test('exam selection, per-exam progress and simulation length are wired into the
     assert.match(html, new RegExp(`\\b${exam}:\\{`), `${exam} should be available in certification configuration`);
   }
   assert.match(html, /data-cert=/, 'home screen should render exam-choice tiles');
+  assert.match(html, /examChosen:false/, 'the app should require an explicit exam choice after opening');
+  assert.match(html, /!state\\.examId\\|\\|!state\\.examChosen/, 'saved progress should not bypass the exam chooser');
   assert.match(html, /progressByExam/);
   assert.match(html, /Math\.min\(45,pool\.length\)/, 'simulations must not claim more questions than the bank contains');
   assert.match(html, /function balanced\(pool,desired\).*Object\.keys\(DOMAINS\)/, 'balanced selection must support exam tracks with different domain counts');
