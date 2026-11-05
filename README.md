@@ -1,6 +1,6 @@
-# Microsoft Data Exam Trainer
+# Microsoft DP Exam Trainer
 
-Nederlandstalig examentrainingsplatform voor DP-600, DP-700, DP-800 en DP-900. De app gebruikt PocketBase voor accounts, voortgang per examen en beheerdersfuncties. Dit is een onafhankelijke leerapp met originele oefenvragen, niet een officiële Microsoft-app. Zie [EXAM_PLATFORM_PLAN.md](EXAM_PLATFORM_PLAN.md) voor de productopzet en implementatiestatus.
+Een uitbreidbaar examentrainingsplatform voor Microsoft DP-certificeringen. De huidige routes zijn DP-600, DP-700, DP-800 en DP-900; nieuwe examens kunnen als zelfstandige routes worden toegevoegd. De app gebruikt PocketBase voor accounts, voortgang per examen en beheerdersfuncties. Dit is een onafhankelijke leerapp met originele oefenvragen, niet een officiële Microsoft-app. Zie [EXAM_PLATFORM_PLAN.md](EXAM_PLATFORM_PLAN.md) voor de productopzet en implementatiestatus.
 
 ## Installatie
 
@@ -26,7 +26,11 @@ Beheerders kunnen een VCE-bestand van maximaal 20 MB importeren. Het bestand wor
 
 ## Inhoud en examendekking
 
-DP-700 behoudt de bestaande vragenbank. DP-600, DP-800 en DP-900 hebben startersets om de leerroute en afzonderlijke voortgang te demonstreren; deze sets zijn nog geen volledige examendekking. De officiële Microsoft-studiegidsen zijn de bron voor examendoelen en kunnen wijzigen. Oefenscores zijn geen officiële Microsoft-examenscores.
+DP-700 heeft de bestaande uitgebreide vragenbank. DP-600, DP-800 en DP-900 hebben startersets om de leerroute en afzonderlijke voortgang te demonstreren; deze sets zijn nog geen volledige examendekking. Elke route gebruikt zijn eigen examendoelen en Microsoft-studiegids. Die doelen kunnen wijzigen. Oefenscores zijn geen officiële Microsoft-examenscores. Nieuwe routes worden aan de examencatalogus en hun eigen vragenbank toegevoegd; de voortgang, keuze-interface en quizmotor zijn al examen-onafhankelijk.
+
+## Een examenroute uitbreiden
+
+De examencatalogus staat in `certifications.js`; de extra vragenbanken staan in `questions-extra.js`. Voeg daar de examencode, titel, omschrijving, doelgroep, domeinen, Microsoft-studiegids, simulatieduur en vragenbank toe. De interface, domeinkeuze, profielvoortgang en administratie bouwen hun weergave uit deze configuratie op. Werk daarna de smoke-tests bij en controleer de officiële examendoelen en bronlinks.
 
 ## Ontwikkelchecks
 
@@ -34,6 +38,7 @@ Voer lokaal uit:
 
 ```sh
 node --test tests/*.test.cjs
+node --check certifications.js
 node --check questions-extra.js
 node --check pb_hooks/auth_audit.pb.js
 node --check pb_migrations/1793568000_admin_and_imported_exams.js
