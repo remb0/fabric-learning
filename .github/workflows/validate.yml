@@ -1,0 +1,31 @@
+name: Validate exam trainer
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate JavaScript syntax
+        run: |
+          node --check questions-extra.js
+          node --check pb_hooks/auth_audit.pb.js
+          node --check pb_migrations/1793568000_admin_and_imported_exams.js
+          node --check pb_migrations/1793570000_learning_activity.js
+      - name: Run exam bank and security smoke tests
+        run: node --test tests/*.test.cjs
+      - name: Build PocketBase container
+        run: docker build --build-arg POCKETBASE_VERSION=0.40.6 -t fabric-exam-trainer:ci .

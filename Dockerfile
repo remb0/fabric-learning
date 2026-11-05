@@ -16,13 +16,14 @@ RUN apk add --no-cache ca-certificates unzip wget \
 FROM alpine:3.22
 RUN apk add --no-cache ca-certificates \
     && addgroup -S pocketbase && adduser -S -G pocketbase pocketbase \
-    && mkdir -p /app/pb_data /app/pb_public /app/pb_migrations \
+    && mkdir -p /app/pb_data /app/pb_public /app/pb_migrations /app/pb_hooks \
     && chown -R pocketbase:pocketbase /app
 WORKDIR /app
 COPY --from=fetch /tmp/pocketbase /usr/local/bin/pocketbase
-COPY --chown=pocketbase:pocketbase index.html questions-en.json questions-en-data.json questions-en-monitor.json /app/pb_public/
+COPY --chown=pocketbase:pocketbase index.html vce-parser.js questions-en.json questions-en-data.json questions-en-monitor.json questions-extra.js /app/pb_public/
 COPY --chown=pocketbase:pocketbase pb_migrations /app/pb_migrations
+COPY --chown=pocketbase:pocketbase pb_hooks /app/pb_hooks
 USER pocketbase
 EXPOSE 8090
 VOLUME ["/app/pb_data"]
-CMD ["/usr/local/bin/pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/app/pb_data", "--publicDir=/app/pb_public", "--migrationsDir=/app/pb_migrations"]
+CMD ["/usr/local/bin/pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/app/pb_data", "--publicDir=/app/pb_public", "--migrationsDir=/app/pb_migrations", "--hooksDir=/app/pb_hooks"]
