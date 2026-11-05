@@ -22,7 +22,10 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           sh -n deploy.sh
+          node --check certifications.js
+          node --check vce-parser.js
           node --check questions-extra.js
+          node --check questions-expanded.js
           node --check pb_hooks/auth_audit.pb.js
           node --check pb_migrations/1793568000_admin_and_imported_exams.js
           node --check pb_migrations/1793570000_learning_activity.js

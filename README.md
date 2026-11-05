@@ -8,12 +8,12 @@ The platform uses PocketBase for accounts, progress sync, and administrator feat
 
 | Exam | Focus | Question bank status |
 |---|---|---|
-| DP-600 | Analytics engineering and Microsoft Fabric | Starter set; still needs full exam coverage |
-| DP-700 | Data engineering in Microsoft Fabric | Existing extended question bank |
-| DP-800 | Database development with AI | Starter set; still needs full exam coverage |
-| DP-900 | Data fundamentals | Starter set; still needs full exam coverage |
+| DP-600 | Analytics engineering and Microsoft Fabric | 18 original practice questions across the current exam domains |
+| DP-700 | Data engineering in Microsoft Fabric | 102 practice questions across the current exam domains |
+| DP-800 | AI-enabled database development | 18 original practice questions across the current exam domains |
+| DP-900 | Data fundamentals | 18 original practice questions across the current exam domains |
 
-Exam objectives and Microsoft study guides can change. Use the linked Microsoft Learn material in each exam track to check current objectives. Practice results are not official Microsoft exam scores.
+Questions are newly written and are not copied from real exams, dumps, or recalled test items. Each question links to the relevant Microsoft exam objectives and, where useful, additional technical material from sources such as SQLBI, Apache, PostgreSQL, GitHub samples, and Microsoft Fabric Community. Exam objectives and study guides can change, so use the linked official material as the current scope checklist. Practice results are not official Microsoft exam scores.
 
 ## Features
 
@@ -70,7 +70,7 @@ Administrators can import VCE files up to 20 MB. The browser parses the file and
 
 ## Adding an exam track
 
-The exam catalogue and per-exam settings are in `certifications.js`. The additional question banks are in `questions-extra.js`; the existing DP-700 bank is embedded in `index.html`. To add a track, define its code, title, audience, description, domains, Microsoft Learn study guide, and simulation duration, then add questions with explanations and source links. Extend the smoke tests to check the new bank and its domain coverage.
+The exam catalogue and per-exam settings are in `certifications.js`. The starter question banks are in `questions-extra.js`; expanded original questions are in `questions-expanded.js`, and the established DP-700 question bank remains embedded in `index.html`. To add a track, define its code, title, audience, description, exam domains, official study guide, and simulation duration, then add original questions with explanations and both objective and technical source links. Extend the smoke tests to check the bank and its domain coverage.
 
 The chooser, quiz flow, profile progress, and administrator activity view read the exam configuration dynamically. New tracks can therefore use the shared platform without adding exam-specific branding to the general pages.
 
@@ -82,6 +82,7 @@ Run these from the repository root:
 sh -n deploy.sh
 node --check certifications.js
 node --check questions-extra.js
+node --check questions-expanded.js
 node --check pb_hooks/auth_audit.pb.js
 node --check pb_migrations/1793568000_admin_and_imported_exams.js
 node --check pb_migrations/1793570000_learning_activity.js
