@@ -7,11 +7,13 @@ const test = require('node:test');
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const extraSource = fs.readFileSync(path.join(root, 'questions-extra.js'), 'utf8');
+const certificationSource = fs.readFileSync(path.join(root, 'certifications.js'), 'utf8');
 const dp700Match = html.match(/const DP700_QUESTIONS = (\[.*?\]);\n    let QUESTIONS/s);
 assert.ok(dp700Match, 'DP-700 question bank should be embedded in the app');
 const dp700 = JSON.parse(dp700Match[1]);
 const sandbox = { window: {} };
 vm.runInNewContext(extraSource, sandbox, { timeout: 1000 });
+vm.runInNewContext(certificationSource, sandbox, { timeout: 1000 });
 const banks = { dp600: sandbox.window.EXTRA_QUESTION_BANKS.dp600, dp700, dp800: sandbox.window.EXTRA_QUESTION_BANKS.dp800, dp900: sandbox.window.EXTRA_QUESTION_BANKS.dp900 };
 const expectedDomains = {
   dp600: ['beheer', 'data', 'monitor'],
@@ -37,8 +39,10 @@ test('all four exam tracks have a question bank and distinct domain coverage', (
 });
 
 test('exam selection, per-exam progress and simulation length are wired into the app', () => {
+  assert.deepEqual(Object.keys(sandbox.window.EXAM_CERTIFICATIONS).sort(), Object.keys(banks).sort());
   for (const exam of Object.keys(banks)) {
-    assert.match(html, new RegExp(`\\b${exam}:\\{`), `${exam} should be available in certification configuration`);
+    assert.ok(sandbox.window.EXAM_CERTIFICATIONS[exam], `${exam} should be available in certification configuration`);
+    assert.ok(sandbox.window.EXAM_CERTIFICATIONS[exam].duration > 0, `${exam} should define its simulation duration`);
   }
   assert.match(html, /data-cert=/, 'home screen should render exam-choice tiles');
   assert.match(html, /examChosen:false/, 'the app should require an explicit exam choice after opening');
@@ -58,6 +62,7 @@ test('activity schema limits reads to administrators and writes to the owning us
 
 test('Docker image includes the extra bank, hooks and PocketBase migrations', () => {
   const dockerfile = fs.readFileSync(path.join(root, 'Dockerfile'), 'utf8');
+  assert.match(dockerfile, /certifications\\.js/);
   assert.match(dockerfile, /questions-extra\.js/);
   assert.match(dockerfile, /COPY --chown=pocketbase:pocketbase pb_migrations/);
   assert.match(dockerfile, /COPY --chown=pocketbase:pocketbase pb_hooks/);
