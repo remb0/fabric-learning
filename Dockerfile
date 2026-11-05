@@ -20,7 +20,7 @@ RUN apk add --no-cache ca-certificates \
     && chown -R pocketbase:pocketbase /app
 WORKDIR /app
 COPY --from=fetch /tmp/pocketbase /usr/local/bin/pocketbase
-COPY --chown=pocketbase:pocketbase index.html vce-parser.js questions-en.json questions-en-data.json questions-en-monitor.json questions-extra.js /app/pb_public/
+COPY --chown=pocketbase:pocketbase index.html certifications.js vce-parser.js questions-en.json questions-en-data.json questions-en-monitor.json questions-extra.js /app/pb_public/
 COPY --chown=pocketbase:pocketbase pb_migrations /app/pb_migrations
 COPY --chown=pocketbase:pocketbase pb_hooks /app/pb_hooks
 USER pocketbase
