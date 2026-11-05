@@ -35,7 +35,7 @@ De bestaande `progress`-record blijft de eigendomsenvelop per gebruiker. Het pay
 
 ## Inhoud en kwaliteit
 
-Elke vragenbank krijgt eigen metadata: certificaatcode, officiële studiegids-URL, datum van inhoudscontrole, domeinen en wegingen. Vragen moeten per doel worden gemarkeerd, uitleggen waarom het antwoord klopt, foutieve afleiders motiveren waar dat leerwaarde toevoegt en verwijzen naar de examendoelen plus relevante aanvullende technische bronnen. Importvragen blijven gescheiden van originele content en mogen een examencode dragen.
+Elke vragenbank krijgt eigen metadata: certificaatcode, officiële studiegids-URL, datum van inhoudscontrole, domeinen en wegingen. Iedere vraag verwijst naar een onderwerpgerichte kennisbron voor verdieping; de relevante examendoelen worden waar beschikbaar apart getoond. Bronnen kunnen Microsoft Learn, YouTube, vakblogs, artikelen, SQLBI, Apache, PostgreSQL, GitHub-samples of Microsoft Fabric Community zijn. Vragen worden per doel gemarkeerd en leggen uit waarom het antwoord klopt; foutieve afleiders worden toegelicht waar dat leerwaarde toevoegt. Importvragen blijven gescheiden van originele content en mogen een examencode dragen.
 
 ### Huidige inhoudsstatus
 
