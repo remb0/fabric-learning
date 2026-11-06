@@ -8,19 +8,23 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const extraSource = fs.readFileSync(path.join(root, 'questions-extra.js'), 'utf8');
 const expandedSource = fs.readFileSync(path.join(root, 'questions-expanded.js'), 'utf8');
+const masterySource = fs.readFileSync(path.join(root, 'questions-mastery.js'), 'utf8');
 const referenceSource = fs.readFileSync(path.join(root, 'question-references.js'), 'utf8');
 const certificationSource = fs.readFileSync(path.join(root, 'certifications.js'), 'utf8');
-const dp700Match = html.match(/const DP700_QUESTIONS = (\[.*?\]);\n    for\(const \[exam,additions\]/s);
+const dp700Match = html.match(/const DP700_QUESTIONS = (\[.*?\]);\n    for\(const bank/s);
 assert.ok(dp700Match, 'DP-700 question bank should be embedded in the app');
 const dp700 = JSON.parse(dp700Match[1]);
 const sandbox = { window: {} };
 vm.runInNewContext(extraSource, sandbox, { timeout: 1000 });
 vm.runInNewContext(certificationSource, sandbox, { timeout: 1000 });
 vm.runInNewContext(expandedSource, sandbox, { timeout: 1000 });
+vm.runInNewContext(masterySource, sandbox, { timeout: 1000 });
 vm.runInNewContext(referenceSource, sandbox, { timeout: 1000 });
-for (const [exam, additions] of Object.entries(sandbox.window.QUESTION_ENRICHMENT)) {
-  if (exam === 'dp700') dp700.push(...additions);
-  else sandbox.window.EXTRA_QUESTION_BANKS[exam].push(...additions);
+for (const bank of [sandbox.window.QUESTION_ENRICHMENT, sandbox.window.QUESTION_MASTERY]) {
+  for (const [exam, additions] of Object.entries(bank)) {
+    if (exam === 'dp700') dp700.push(...additions);
+    else sandbox.window.EXTRA_QUESTION_BANKS[exam].push(...additions);
+  }
 }
 for (const [exam, references] of Object.entries(sandbox.window.QUESTION_REFERENCE_OVERRIDES)) {
   const questions = exam === 'dp700' ? dp700 : sandbox.window.EXTRA_QUESTION_BANKS[exam];
@@ -37,11 +41,13 @@ const expectedDomains = {
 test('all four exam tracks have a question bank and distinct domain coverage', () => {
   assert.deepEqual(Object.keys(banks).sort(), ['dp600', 'dp700', 'dp800', 'dp900']);
   for (const [exam, questions] of Object.entries(banks)) {
-    assert.ok(questions.length >= 18, `${exam} should have a substantial practice bank`);
+    assert.ok(questions.length >= 50, `${exam} should have at least 50 practice questions`);
     assert.equal(new Set(questions.map(q => q.id)).size, questions.length, `${exam} question IDs should be unique`);
     assert.deepEqual([...new Set(questions.map(q => q.domain))].sort(), [...expectedDomains[exam]].sort(), `${exam} should cover every configured exam domain`);
     for (const q of questions) {
       assert.ok(q.stem && q.topic && q.explanation && (q.source || q.sources?.length), `${exam}/${q.id} needs a stem, topic, explanation and source`);
+      assert.ok(q.explanation.length >= 120, `${exam}/${q.id} needs a substantial teaching explanation`);
+      assert.ok((q.explanation.match(/[.!?](?:\s|$)/g) || []).length >= 2, `${exam}/${q.id} explanation should teach in multiple sentences`);
       assert.ok(Array.isArray(q.options) && q.options.length >= 2, `${exam}/${q.id} needs answer options`);
       assert.ok(Array.isArray(q.correct) && q.correct.length > 0, `${exam}/${q.id} needs a correct answer`);
       assert.ok(q.correct.every(i => Number.isInteger(i) && i >= 0 && i < q.options.length), `${exam}/${q.id} answer indices must point to options`);
@@ -79,12 +85,29 @@ test('activity schema limits reads to administrators and writes to the owning us
   assert.match(migration, /updateRule: '@request\.auth\.id != "" && user = @request\.auth\.id && @request\.body\.user = @request\.auth\.id'/);
 });
 
+test('guest question limit and improvement suggestions are enforced', () => {
+  assert.match(html, /const GUEST_LIMIT=2/);
+  assert.match(html, /guestLimitReached\(\).*openAccount\('limit'\)/s);
+  assert.match(html, /recordGuestAnswer\(\)/);
+  assert.match(html, /id="suggestion-dialog"/);
+  assert.match(html, /collections\/improvement_suggestions\/records/);
+
+  const migration = fs.readFileSync(path.join(root, 'pb_migrations/1793571000_improvement_suggestions.js'), 'utf8');
+  assert.match(migration, /name: 'improvement_suggestions'/);
+  assert.match(migration, /listRule: '@request\.auth\.role = "admin"'/);
+  assert.match(migration, /@request\.body\.status:isset = false/);
+  assert.match(migration, /@request\.body\.user:isset = false/);
+});
+
 test('Docker image includes the question banks, hooks and PocketBase migrations', () => {
   const dockerfile = fs.readFileSync(path.join(root, 'Dockerfile'), 'utf8');
+  const deployScript = fs.readFileSync(path.join(root, 'deploy.sh'), 'utf8');
   assert.match(dockerfile, /certifications\.js/);
   assert.match(dockerfile, /questions-extra\.js/);
   assert.match(dockerfile, /questions-expanded\.js/);
+  assert.match(dockerfile, /questions-mastery\.js/);
   assert.match(dockerfile, /question-references\.js/);
   assert.match(dockerfile, /COPY --chown=pocketbase:pocketbase pb_migrations/);
   assert.match(dockerfile, /COPY --chown=pocketbase:pocketbase pb_hooks/);
+  assert.match(deployScript, /test -s \/app\/pb_public\/questions-mastery\.js/);
 });

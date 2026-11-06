@@ -46,6 +46,7 @@ printf 'Controleren of de container de bijgewerkte appbestanden bevat...\n'
 docker compose exec -T "$SERVICE" sh -ec '
   test -s /app/pb_public/index.html
   test -s /app/pb_public/certifications.js
+  test -s /app/pb_public/questions-mastery.js
   grep -q "MICROSOFT DP EXAMS" /app/pb_public/index.html
   grep -q "examChosen:false" /app/pb_public/index.html
 '

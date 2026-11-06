@@ -26,6 +26,7 @@ jobs:
           node --check vce-parser.js
           node --check questions-extra.js
           node --check questions-expanded.js
+          node --check questions-mastery.js
           node --check question-references.js
           node --check pb_hooks/auth_audit.pb.js
           node --check pb_migrations/1793568000_admin_and_imported_exams.js

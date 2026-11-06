@@ -40,7 +40,7 @@ Elke vragenbank krijgt eigen metadata: certificaatcode, officiële studiegids-UR
 ### Huidige inhoudsstatus
 
 - DP-700: bestaande uitgebreide vragenbank en Engelse vertaling blijven behouden.
-- DP-600, DP-800 en DP-900: elk heeft nu 18 originele vragen verdeeld over de geconfigureerde examendomeinen, met officiële examendoelen en aanvullende technische bronnen.
+- DP-600, DP-800 en DP-900: elk heeft nu 50 originele vragen verdeeld over de geconfigureerde examendomeinen, met uitgebreide antwoordtoelichtingen, officiële examendoelen en aanvullende technische bronnen.
 - DP-700: de bestaande uitgebreide bank is behouden en aangevuld met nieuwe scenario's en bredere technische bronnen.
 - Deze aantallen vormen een eerste brede oefenbank, geen volledige reproductie of vervanging van het officiële examen. Vóór verdere uitbreiding moet elke bank periodiek worden vergeleken met de actuele domeinwegingen en inhoudelijk worden nagekeken.
 - De keuze van het examen en de domeinlabels zijn per track ingericht. De bestaande quizmotor wordt nog hergebruikt; gespecialiseerde vraagtypen en per-examen volledig gelokaliseerde uitleg zijn uitbreidingswerk.

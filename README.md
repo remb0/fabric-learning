@@ -8,18 +8,20 @@ The platform uses PocketBase for accounts, progress sync, and administrator feat
 
 | Exam | Focus | Question bank status |
 |---|---|---|
-| DP-600 | Analytics engineering and Microsoft Fabric | 18 original practice questions across the current exam domains |
+| DP-600 | Analytics engineering and Microsoft Fabric | 50 original practice questions across the current exam domains |
 | DP-700 | Data engineering in Microsoft Fabric | 102 practice questions across the current exam domains |
-| DP-800 | AI-enabled database development | 18 original practice questions across the current exam domains |
-| DP-900 | Data fundamentals | 18 original practice questions across the current exam domains |
+| DP-800 | AI-enabled database development | 50 original practice questions across the current exam domains |
+| DP-900 | Data fundamentals | 50 original practice questions across the current exam domains |
 
-Questions are newly written and are not copied from real exams, dumps, or recalled test items. Every question includes a topic-specific further-reading link, such as Microsoft Learn documentation, SQLBI articles, Apache and PostgreSQL documentation, GitHub samples, or Microsoft Fabric Community posts. Where available, the relevant exam objectives are linked separately. Exam objectives and study guides can change, so use the official material as the current scope checklist. Practice results are not official Microsoft exam scores.
+Questions are newly written and are not copied from real exams, dumps, or recalled test items. Every answer includes a multi-sentence teaching explanation and every question links to topic-specific further reading, such as Microsoft Learn documentation, SQLBI articles, Apache and PostgreSQL documentation, GitHub samples, or Microsoft Fabric Community posts. Where available, the relevant exam objectives are linked separately. Exam objectives and study guides can change, so use the official material as the current scope checklist. Practice results are not official Microsoft exam scores.
 
 ## Features
 
 - Exam selection tiles explain the intended audience and focus of each certification.
 - Study mode gives immediate feedback; exam simulation is timed and uses the selected exam's configuration.
 - Profiles keep progress separate for each exam and sync it across devices after sign-in.
+- Visitors can answer two questions before free sign-in is required; accounts unlock unlimited practice, cross-device sync, saved results, bookmarks, mistake review, and resumable sessions.
+- Visitors and signed-in learners can submit improvement suggestions from every page; administrators can review them in the admin view.
 - Administrators can review accounts, sign-in attempts, and recent high-level learning activity.
 - Administrators can import supported VCE files; parsing takes place in the browser.
 - Dutch and English interface text is available.
@@ -60,7 +62,9 @@ PocketBase runs versioned collection migrations when the container starts. The n
 
 ## Accounts and administration
 
-Learners can practice without an account, but their progress will not sync between devices. Signed-in users can see their own progress by exam in the profile.
+Learners can answer two questions without an account. After that, free sign-in is required to continue. The browser stores only the anonymous usage counter; signed-in users get unlimited practice and can see their synced progress by exam in the profile.
+
+The suggestion form accepts feedback from visitors and signed-in learners. Suggestions are stored in the `improvement_suggestions` collection and are readable only by administrators. Public submissions cannot set their own review status or impersonate an account.
 
 To grant administrator access, create the account through the app and set its `role` field to `admin` through the restricted PocketBase superuser interface. Regular users cannot change their own role. The app's administrator page is restricted to accounts with the admin role.
 
@@ -70,7 +74,7 @@ Administrators can import VCE files up to 20 MB. The browser parses the file and
 
 ## Adding an exam track
 
-The exam catalogue and per-exam settings are in `certifications.js`. The starter question banks are in `questions-extra.js`; expanded original questions are in `questions-expanded.js`; topic-specific references for all banks are in `question-references.js`; and the established DP-700 question bank remains embedded in `index.html`. To add a track, define its code, title, audience, description, exam domains, official study guide, and simulation duration, then add original questions with explanations and topic-specific further-reading links. Extend the smoke tests to check the bank and its domain coverage.
+The exam catalogue and per-exam settings are in `certifications.js`. The starter question banks are in `questions-extra.js`; expanded original questions are in `questions-expanded.js`; the additional mastery questions are in `questions-mastery.js`; topic-specific references for all banks are in `question-references.js`; and the established DP-700 question bank remains embedded in `index.html`. To add a track, define its code, title, audience, description, exam domains, official study guide, and simulation duration, then add at least 50 original questions with substantial explanations and topic-specific further-reading links. Extend the smoke tests to check the bank and its domain coverage.
 
 The chooser, quiz flow, profile progress, and administrator activity view read the exam configuration dynamically. New tracks can therefore use the shared platform without adding exam-specific branding to the general pages.
 
@@ -83,10 +87,12 @@ sh -n deploy.sh
 node --check certifications.js
 node --check questions-extra.js
 node --check questions-expanded.js
+node --check questions-mastery.js
 node --check question-references.js
 node --check pb_hooks/auth_audit.pb.js
 node --check pb_migrations/1793568000_admin_and_imported_exams.js
 node --check pb_migrations/1793570000_learning_activity.js
+node --check pb_migrations/1793571000_improvement_suggestions.js
 node --test tests/*.test.cjs
 docker compose build
 ```
