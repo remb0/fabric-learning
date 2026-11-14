@@ -22,6 +22,10 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           sh -n deploy.sh
+          node --check learning-time.js
+          node --check pb_hooks/learning_time.pb.js
+          node --check pb_hooks/lib/learning_time.js
+          node --check pb_migrations/1794650000_active_learning_time.js
           node --check certifications.js
           node --check vce-parser.js
           node --check questions-extra.js
@@ -35,3 +39,12 @@ jobs:
         run: node --test tests/*.test.cjs
       - name: Build PocketBase container
         run: docker build --build-arg POCKETBASE_VERSION=0.40.6 -t fabric-exam-trainer:ci .
+      - name: Verify time tracking on real PocketBase
+        run: |
+          docker run -d --name learning-time-test -p 127.0.0.1:8098:8090 fabric-exam-trainer:ci
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8098/api/health; then break; fi
+            sleep 1
+          done
+          docker exec learning-time-test pocketbase superuser upsert test-admin@example.invalid 'Local-test-only-2398!' --dir=/app/pb_data
+          PB_TEST_URL=http://127.0.0.1:8098 node --test tests/learning-time.test.cjs

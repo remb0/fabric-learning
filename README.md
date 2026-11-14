@@ -26,7 +26,11 @@ Questions are newly written and are not copied from real exams, dumps, or recall
 - Administrators can import supported VCE files; parsing takes place in the browser.
 - Dutch and English interface text is available.
 
-The activity view records the selected exam, a broad activity label, and the latest heartbeat. It does not record answer choices or question content. Tell learners about this monitoring and apply an appropriate retention policy.
+The activity view records the selected exam, a broad activity label, and the latest heartbeat. Signed-in learners also see active learning time today, this week, in total and per exam. Administrators can filter time by user, exam and period and inspect daily totals. Time counts while practicing or reading results in a visible tab, pauses after two minutes without interaction, and excludes account dialogs, administration and dashboards. The exam countdown remains independent.
+
+The server accepts at most 30 seconds per pulse, rejects duplicate sequences and caps concurrent tabs/devices to one account-wide clock. Daily totals use Europe/Amsterdam time, including daylight saving; weeks start on Monday. Seconds are preserved and rounded down only for display. A network outage or closed browser can lose an unsubmitted interval; offline time is not reconstructed, and the session status reports unavailable tracking. Totals begin with the first tracked session; historical time cannot be inferred from old presence records. The last interval can take up to 15 seconds to appear. Open account summaries refresh on opening; administrators can use Refresh.
+
+Time totals and presence do not include answer choices or question content. Learners can read only their own time and presence; administrators can read all. Only the authenticated server route writes time totals and its private deduplication clock. Related records are deleted with the account. Tell learners about this monitoring and apply an appropriate retention policy.
 
 ## Docker deployment
 

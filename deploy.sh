@@ -44,6 +44,9 @@ docker compose up -d --force-recreate "$SERVICE"
 
 printf 'Controleren of de container de bijgewerkte appbestanden bevat...\n'
 docker compose exec -T "$SERVICE" sh -ec '
+  test -s /app/pb_public/learning-time.js
+  test -s /app/pb_hooks/learning_time.pb.js
+  test -s /app/pb_migrations/1794650000_active_learning_time.js
   test -s /app/pb_public/index.html
   test -s /app/pb_public/certifications.js
   test -s /app/pb_public/questions-mastery.js
